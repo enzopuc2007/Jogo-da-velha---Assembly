@@ -10,15 +10,13 @@ MATRIZ DB 1,1,1
        DB 1,1,1
        DB 1,1,1
 .CODE
-;  COMPUTADOR PROC ;
-    
 MAIN PROC 
     MOV AX,@DATA
     MOV DS,AX
 
     CALL INICIACAO
     AND AL,0
-    JE PESSOA 
+    ;JE PESSOA 
     ; CALL MULTIPLAYER
     JMP CONTINUA
 
@@ -26,8 +24,9 @@ PESSOA:
     ; CALL COMPUTADOR  
 
 CONTINUA:
-    CALL LEITURA
+    CALL PULAR 
     CALL IMPRESSAO
+    CALL LEITURA
 
     MOV AH,4CH
     INT 21h
@@ -54,7 +53,7 @@ TENTENOVAMENTE:
     MOV AH,9 ; imprime mensagem de opção inválida
     LEA DX,MSG2
     INT 21h
- TENTENOVAMENTE ; volta para o início do escopo de verificação de opção
+    JMP TENTENOVAMENTE ; volta para o início do escopo de verificação de opção
 
     RETORNA1: ; este escopo retorna para o procedimento inicial
     RET
@@ -149,7 +148,24 @@ REPETE1:
     RET
  IMPRESSAO ENDP
 
+  PULAR PROC
+    PUSH AX
+    PUSH DX
 
- MULTIPLAYER PROC 
-    
+    MOV AH,2
+    MOV CX,12
+
+ESPACO:
+    MOV DL,10
+    INT 21h
+    MOV DL,13
+    INT 21h
+    LOOP ESPACO
+
+    POP DX
+    POP AX
+
+    RET
+ PULAR ENDP
+
  END MAIN
