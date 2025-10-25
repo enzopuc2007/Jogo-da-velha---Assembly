@@ -12,6 +12,26 @@ MATRIZ DB 1,1,1
 .CODE
 ;  COMPUTADOR PROC ;
     
+MAIN PROC 
+    MOV AX,@DATA
+    MOV DS,AX
+
+    CALL INICIACAO
+    AND AL,0
+    JE PESSOA 
+    ; CALL MULTIPLAYER
+    JMP CONTINUA
+
+PESSOA:
+    ; CALL COMPUTADOR  
+
+CONTINUA:
+    CALL LEITURA
+    CALL IMPRESSAO
+
+    MOV AH,4CH
+    INT 21h
+ MAIN ENDP
 
  INICIACAO PROC ; este procedimento é responsável por determinar a escolha de tipo de jogo que o usuário vai jogar
 TENTENOVAMENTE:
@@ -34,8 +54,7 @@ TENTENOVAMENTE:
     MOV AH,9 ; imprime mensagem de opção inválida
     LEA DX,MSG2
     INT 21h
-
-    JMP TENTENOVAMENTE ; volta para o início do escopo de verificação de opção
+ TENTENOVAMENTE ; volta para o início do escopo de verificação de opção
 
     RETORNA1: ; este escopo retorna para o procedimento inicial
     RET
@@ -130,25 +149,7 @@ REPETE1:
     RET
  IMPRESSAO ENDP
 
-  MAIN PROC 
-    MOV AX,@DATA
-    MOV DS,AX
 
-    CALL INICIACAO
-    AND AL,0
-    JE PESSOA 
-    ; CALL MULTIPLAYER
-    JMP CONTINUA
-
-PESSOA:
-    ; CALL COMPUTADOR  
-
-CONTINUA:
-    CALL LEITURA
-    CALL IMPRESSAO
-
-    MOV AH,4CH
-    INT 21h
- MAIN ENDP
- 
+ MULTIPLAYER PROC 
+    
  END MAIN
