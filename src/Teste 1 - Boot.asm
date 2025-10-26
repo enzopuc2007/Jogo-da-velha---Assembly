@@ -1,4 +1,4 @@
-TITLE Boot
+TITLE Bot
 .MODEL SMALL
 .STACK 100h
 .DATA
@@ -6,57 +6,63 @@ MSG1 DB 'JOGO DA VELHA',10,10,13,'Deseja jogar com outra pessoa ou com o computa
 MSG2 DB 10,10,'Tente novamente, digito não reconhecido...',10,10,13
 MSG3 DB 'Insira o numero da linha em que você deseja inserir a sua peça do jogo (1 a 3): $',10,10,13
 MSG4 DB 'Insira o numero da coluna em que você deseja inserir a sua peça do jogo (1 a 3): $'
-MATRIZ DB 1,1,1
-       DB 1,1,1
-       DB 1,1,1
+MATRIZ DB ?,?,?
+       DB ?,?,?
+       DB ?,?,?
+
+MSG_ZERO DB 'A opcao selecionada foi a opcao zero.', 13, 10, '$'
+MSG_UM DB 'A opcao selecionada foi a opcao um.', 13, 10, '$'
 .CODE
-MAIN PROC 
-    MOV AX,@DATA
-    MOV DS,AX
 
-    CALL INICIACAO
-    AND AL,0
-    ;JE PESSOA 
-    ; CALL MULTIPLAYER
-    JMP CONTINUA
+IMPRIME_ZERO PROC 
+    MOV AH, 09H
+    MOV DX, OFFSET MSG_ZERO
 
-PESSOA:
-    ; CALL COMPUTADOR  
+    MOV DL, 13 
+    MOV DL, 10
 
-CONTINUA:
-    CALL PULAR 
-    CALL IMPRESSAO
-    CALL LEITURA
+    INT 21H
 
-    MOV AH,4CH
-    INT 21h
- MAIN ENDP
+    RET
+ENDP IMPRIME_ZERO 
+
+IMPRIME_UM PROC 
+    MOV AH, 09H
+    MOV DX, OFFSET MSG_UM
+
+    MOV DL, 13 
+    MOV DL, 10
+
+    INT 21H
+
+    RET
+ENDP IMPRIME_UM 
 
  INICIACAO PROC ; este procedimento é responsável por determinar a escolha de tipo de jogo que o usuário vai jogar
-TENTENOVAMENTE:
-    MOV AH,9
-    LEA DX,MSG1 ; imprime a mensagem inicial
-    INT 21h
+    ENTRADA_OPCAO:
+        MOV AH,9
+        LEA DX,MSG1 ; imprime a mensagem inicial
+        INT 21h
 
-    MOV AH,1 ; espera um valor de entrada a ser digitado pelo usuário
-    INT 21h
+        MOV AH,1 ; espera um valor de entrada a ser digitado pelo usuário
+        INT 21h
 
-    AND AL,0Fh ; insere o valor digitado em AL
+        AND AL, 0FH ; insere o valor digitado em AL
 
-    TEST AL,0 ; verifica se o valor digitado foi zero
-    JE RETORNA1
-    TEST AL,1 ; verifica se o valor digitado foi um
-    JE RETORNA1
-    
-    ; caso o número digitado não seja 0 ou 1...
+        CMP AL, 0 ; verifica se o valor digitado foi zero
+        JZ RETORNA1
+        CMP AL, 1 ; verifica se o valor digitado foi um
+        JE RETORNA1
+        
+        ; caso o número digitado não seja 0 ou 1...
 
-    MOV AH,9 ; imprime mensagem de opção inválida
-    LEA DX,MSG2
-    INT 21h
-    JMP TENTENOVAMENTE ; volta para o início do escopo de verificação de opção
+        MOV AH,9 ; imprime mensagem de opção inválida
+        LEA DX,MSG2
+        INT 21h
+        JMP ENTRADA_OPCAO ; volta para o início do escopo de verificação de opção
 
-    RETORNA1: ; este escopo retorna para o procedimento inicial
-    RET
+        RETORNA1: ; este escopo retorna para o procedimento inicial
+        RET
  INICIACAO ENDP ; fim do procedimento iniciacao
  
  LEITURA PROC ; início do procedimento de leitura de posições e do jogo propriamente dito
@@ -168,4 +174,42 @@ ESPACO:
     RET
  PULAR ENDP
 
+ MAIN PROC 
+    MOV AX,@DATA
+    MOV DS,AX
+
+    CALL INICIACAO ; chama o procedimento de iniciacao
+    ; AND AL, 0FH ; verifica a opcao de jogo selecionada
+
+    ; codigo inserido para fins de teste
+    ; opcao selecionada: 0
+    CMP AL, 0
+    JZ ESCOPO_ZERO
+    
+    ESCOPO_ZERO:
+        CALL IMPRIME_ZERO 
+
+    CMP AL, 1
+    JE ESCOPO_UM
+
+    ESCOPO_UM:
+        CALL IMPRIME_UM 
+    ; ou
+    ; opcao selecionada: 1
+
+    ;JE PESSOA 
+    ; CALL MULTIPLAYER
+    JMP CONTINUA
+
+PESSOA:
+    ; CALL COMPUTADOR  
+
+CONTINUA:
+    CALL PULAR 
+    CALL IMPRESSAO
+    CALL LEITURA
+
+    MOV AH,4CH
+    INT 21h
+ MAIN ENDP
  END MAIN
