@@ -5,15 +5,32 @@ TITLE Bot
   MSG_BEMVINDO DB 'JOGO DA VELHA', 13, 10, 13, 10, '$'
   MSG1 DB 'Selecione o modo de jogo (0 - Multiplayer | 1 - Computador)', 13, 10, 13, 10,'Digite a sua opcao: $'
   MSG2 DB 10,10,'Tente novamente, digito nao reconhecido...',13, 13, 10, '$'
-; MSG3 DB 'Insira o numero da linha em que você deseja inserir a sua peça do jogo (1 a 3): $', 13, 10
-; MSG4 DB 'Insira o numero da coluna em que você deseja inserir a sua peça do jogo (1 a 3): $', 13, 10
-MATRIZ DB ?,?,?
-       DB ?,?,?
-       DB ?,?,?
+  ; MSG3 DB 'Insira o numero da linha em que você deseja inserir a sua peça do jogo (1 a 3): $', 13, 10
+  ; MSG4 DB 'Insira o numero da coluna em que você deseja inserir a sua peça do jogo (1 a 3): $', 13, 10
+  MATRIZ DB 3 DUP (3 DUP (?)) ; 
+  VETOR_POSICOES DB 0, 1, 2, 3, 4, 5, 6, 7, 8
 
 MSG_ZERO DB 13, 10, 'A opcao selecionada foi a opcao MULTIPLAYER.', 13, 10, '$'
 MSG_UM DB 13, 10, 'A opcao selecionada foi a opcao JOGO COM COMPUTADOR.', 13, 10, '$'
 .CODE
+  JOGO_COMPUTADOR PROC
+
+    MOV AH, 09H
+    MOV DX, OFFSET MSG_UM
+    INT 21H
+
+    RET
+  ENDP JOGO_COMPUTADOR
+
+  MULTIPLAYER PROC 
+  
+    MOV AH, 09H
+    MOV DX, OFFSET MSG_ZERO
+    INT 21H
+
+    RET
+  ENDP MULTIPLAYER
+
   INICIACAO PROC
     ; IMPRIME MENSAGEM DE BEM-VINDO
     MOV AH, 09H
@@ -70,11 +87,11 @@ MSG_UM DB 13, 10, 'A opcao selecionada foi a opcao JOGO COM COMPUTADOR.', 13, 10
     JZ ESCOPO_ZERO
 
     ESCOPO_UM:
-      CALL IMPRIME_UM
+      CALL JOGO_COMPUTADOR
       JMP FIM
 
     ESCOPO_ZERO:
-      CALL IMPRIME_ZERO
+      CALL MULTIPLAYER
       JMP FIM
 
     FIM:
