@@ -61,13 +61,13 @@ MSG_UM DB 13, 10, 'A opcao selecionada foi a opcao JOGO COM COMPUTADOR.', 13, 10
   IMPRIME_UM ENDP
 
  MAIN PROC 
-    MOV AX,@DATA
+    MOV AX,@DATA      ;Inicialização dos dados
     MOV DS,AX
 
-    CALL INICIACAO
+    CALL INICIACAO    ;Iniciação do jogo
 
-    CMP AL, 0
-    JZ ESCOPO_ZERO
+    CMP AL, 0         ;Condição para entrar no modo multiplayer
+    JZ ESCOPO_ZERO    ;Condição 
 
     ESCOPO_UM:
       CALL IMPRIME_UM
@@ -78,7 +78,7 @@ MSG_UM DB 13, 10, 'A opcao selecionada foi a opcao JOGO COM COMPUTADOR.', 13, 10
       JMP FIM
 
     FIM:
-      MOV AH, 4CH
+      MOV AH, 4CH     ;Devolve o controle 
       INT 21H
  MAIN ENDP
 END MAIN
