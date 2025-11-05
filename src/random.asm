@@ -1,0 +1,24 @@
+TITLE 
+.MODEL SMALL
+.DATA
+.CODE
+  MAIN PROC
+    XOR AX, AX
+    XOR BX, BX
+    XOR CX, CX
+    XOR DX, DX
+
+  MOV AH, 02H
+  INT 1AH
+
+  AND DH,0Fh
+  OR DH,30h
+
+  MOV AH,2
+  MOV DL,DH
+  INT 21h
+
+  MOV AH, 4CH
+  INT 21H
+  MAIN ENDP
+END MAIN
