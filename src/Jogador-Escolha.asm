@@ -39,7 +39,13 @@ CAPTA:
 
     LOOP NOVAMENTE
 
+    PUSH BX
+    SHR BX, 8
+    AND BX, 0FH
+
     POP SI
+    AND SI, 0FH
+
     POP DX
     POP CX
     POP AX
