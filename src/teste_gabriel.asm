@@ -61,6 +61,18 @@ MSG_UM DB 13, 10, 'A opcao selecionada foi a opcao JOGO COM COMPUTADOR.', 13, 10
       RET 
   INICIACAO ENDP
 
+  JOGO_COMPUTADOR PROC
+  ;Este procedimento molda o jogo da velha para jogo com computador
+
+    RET
+  JOGO_COMPUTADOR ENDP
+
+  MULTIPLAYER PROC
+  ;Este procedimento molda o jogo da velha para multiplayer
+    
+    RET
+  MULTIPLAYER ENDP
+
   IMPRIME_ZERO PROC
     MOV AH, 09H
     MOV DX, OFFSET MSG_ZERO
@@ -78,24 +90,24 @@ MSG_UM DB 13, 10, 'A opcao selecionada foi a opcao JOGO COM COMPUTADOR.', 13, 10
   IMPRIME_UM ENDP
 
  MAIN PROC 
-    MOV AX,@DATA
+    MOV AX,@DATA      ;Inicialização dos dados
     MOV DS,AX
 
-    CALL INICIACAO
+    CALL INICIACAO    ;Iniciação do jogo
 
-    CMP AL, 0
-    JZ ESCOPO_ZERO
+    CMP AL, 0         ;Condição para entrar no modo multiplayer
+    JZ ESCOPO_ZERO    ;Condição 
 
     ESCOPO_UM:
       CALL JOGO_COMPUTADOR
       JMP FIM
 
-    ESCOPO_ZERO:
+    ESCOPO_ZERO:        
       CALL MULTIPLAYER
       JMP FIM
 
     FIM:
-      MOV AH, 4CH
+      MOV AH, 4CH     ;Devolve o controle 
       INT 21H
  MAIN ENDP
 END MAIN
