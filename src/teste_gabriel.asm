@@ -7,8 +7,8 @@ TITLE Bot
   MSG2 DB 10,10,'Tente novamente, digito nao reconhecido...',13, 13, 10, '$'
   ; MSG3 DB 'Insira o numero da linha em que você deseja inserir a sua peça do jogo (1 a 3): $', 13, 10
   ; MSG4 DB 'Insira o numero da coluna em que você deseja inserir a sua peça do jogo (1 a 3): $', 13, 10
-  MATRIZ DB 3 DUP (3 DUP (?)) ; 
-  VETOR_POSICOES DB 0, 1, 2, 3, 4, 5, 6, 7, 8
+  MATRIZ DB 3 DUP (3 DUP (?)) ; define a matriz de jogo da velha
+  VETOR_POSICOES DB 0, 1, 2, 3, 4, 5, 6, 7, 8 ; 
 
 MSG_ZERO DB 13, 10, 'A opcao selecionada foi a opcao MULTIPLAYER.', 13, 10, '$'
 MSG_UM DB 13, 10, 'A opcao selecionada foi a opcao JOGO COM COMPUTADOR.', 13, 10, '$'
