@@ -3,11 +3,6 @@ TITLE
 .DATA
 .CODE
   MAIN PROC
-    XOR AX, AX
-    XOR BX, BX
-    XOR CX, CX
-    XOR DX, DX
-
   MOV AH, 02H
   INT 1AH
 
