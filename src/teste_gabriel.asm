@@ -8,8 +8,7 @@ TITLE Bot
   ; MSG3 DB 'Insira o numero da linha em que você deseja inserir a sua peça do jogo (1 a 3): $', 13, 10
   ; MSG4 DB 'Insira o numero da coluna em que você deseja inserir a sua peça do jogo (1 a 3): $', 13, 10
   MATRIZ DB 3 DUP (3 DUP (?)) ; define a matriz de jogo da velha
-  VETOR_POSICOES DB 0, 1, 2, 3, 4, 5, 6, 7, 8 ; 
-  VETOR_G DB 9 DUP (?); [ , , , , , , , , ]
+  VETOR_G DB 9 DUP (?) ; [ , , , , , , , , ]
 
   MSG_ZERO DB 13, 10, 'A opcao selecionada foi a opcao MULTIPLAYER.', 13, 10, '$'
   MSG_UM DB 13, 10, 'A opcao selecionada foi a opcao JOGO COM COMPUTADOR.', 13, 10, '$'
@@ -171,11 +170,15 @@ TITLE Bot
 
       PAR:
         MOV BYTE PTR MATRIZ[BX+SI], 6Fh
+        ADD BX,SI
+        MOV BYTE PTR VETOR_G[BX], 6Fh
         ; IMPRIME_MATRIZ
         JMP RETORNA_PRINCIPAL
 
       IMPAR:
         MOV BYTE PTR MATRIZ[BX+SI], 78h
+        ADD BX,SI
+        MOV BYTE PTR VETOR_G[BX], 78h
         ; IMPRIME_MATRIZ
 
       RETORNA_PRINCIPAL:

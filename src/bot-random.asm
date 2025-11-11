@@ -1,0 +1,38 @@
+TITLE Random bot
+.MODEL SMALL
+.STACK 100h
+.DATA
+VETOR_G DB 1,1,1,1,1,1,1,1,1
+.CODE
+  RANDOM PROC
+VOLTA:
+    MOV AH, 02H
+    INT 1AH
+
+    MOV BX,2
+
+    AND DH,0Fh
+    SUB DH,1
+
+    JS VOLTA
+
+    MOV DL,VETOR_G[BX]
+
+    CMP DL,6Fh
+    JAE VOLTA
+
+    MOV VETOR_G[BX],6Fh
+
+    RET
+  RANDOM ENDP
+
+  MAIN PROC
+    MOV AX,@DATA
+    MOV DS,AX
+
+    CALL RANDOM
+
+    MOV AH,4Ch
+    INT 21h
+  MAIN ENDP
+END MAIN
