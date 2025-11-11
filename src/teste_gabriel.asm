@@ -9,6 +9,7 @@ TITLE Bot
   ; MSG4 DB 'Insira o numero da coluna em que você deseja inserir a sua peça do jogo (1 a 3): $', 13, 10
   MATRIZ DB 3 DUP (3 DUP (?)) ; define a matriz de jogo da velha
   VETOR_POSICOES DB 0, 1, 2, 3, 4, 5, 6, 7, 8 ; 
+  VETOR_G DB 9 DUP (?); [ , , , , , , , , ]
 
   MSG_ZERO DB 13, 10, 'A opcao selecionada foi a opcao MULTIPLAYER.', 13, 10, '$'
   MSG_UM DB 13, 10, 'A opcao selecionada foi a opcao JOGO COM COMPUTADOR.', 13, 10, '$'
@@ -21,8 +22,19 @@ TITLE Bot
   MSG_VEZ_J1 DB 'Vez do jogador 1 $'
   MSG_VEZ_J2 DB 'Vez do jogador 2 $'
 
+  MSG_GANHOU_J1 DB 'Jogador 1 ganhou'
+  MSG_GANHOU_J2 DB 'Jogador 2 ganhou'
 .CODE
-  MOSTRA_MATRIZ MACRO
+  PULA_LINHA MACRO ; macro de pular linha (será usado repetidas vezes ao longo do jogo)
+    MOV AH, 02H
+    MOV DL, 10
+    INT 21H
+  ENDM
+
+  IMPRIME_MATRIZ MACRO
+
+    PUSH CX
+
     XOR BX,BX
     XOR SI,SI
     MOV AH,2
@@ -100,16 +112,81 @@ TITLE Bot
     INT 21h
     DEC CH
     JNZ REPETE2
+
+    POP CX
+
   ENDM
 
-  JOGO_COMPUTADOR PROC
+  JOGO_MULTIPLAYER PROC ; procedimento de inicialização da opção multiplayer
 
-    MOV AH, 09H
-    MOV DX, OFFSET MSG_UM
+  ; ROT_IMPRIME_MATRIZ:
+    IMPRIME_MATRIZ
+
+  INICIO_LEITURA:
+    PUSH CX ; 
+    MOV CX, 2 ; 
+
+  NOVAMENTE: ; le o endereco de linha
+    CMP CX, 1 ; 
+    JE DOIS ; 
+    
+    MOV AH, 09H ; 
+    LEA DX, MSG_INSIRA_LINHA ; 
+    INT 21H ; 
+
+    JMP CAPTA ; 
+
+  DOIS: ; le o endereco de coluna
+    MOV AH, 09H ;  
+    LEA DX, MSG_INSIRA_COLUNA ; 
+    INT 21H ;  
+    SHL BX, 8 ; 
+
+  CAPTA: 
+    MOV AH, 01H
     INT 21H
 
+    MOV BL, AL
+
+    PULA_LINHA
+
+    LOOP NOVAMENTE
+
+    PUSH BX
+    SHR BX, 8
+    AND BX, 0FH
+
+    POP SI
+    AND SI, 0FH
+
+    POP CX
+
+    VERIFICA_PARIDADE: ; SE CX FOR ÍMPAR -> VEZ DO J1
+                       ; SE CX FOR PAR -> VEZ DO J2
+      PUSH CX
+      AND CX, 01H
+
+      CMP CX, 1
+      JZ IMPAR
+
+      PAR:
+        MOV AL, 6Fh
+        MOV MATRIZ[BX+SI], AL
+        ; IMPRIME_MATRIZ
+        JMP RETORNA_PRINCIPAL
+
+      IMPAR:
+        MOV AL, 78h
+        MOV MATRIZ[BX+SI], AL
+        ; IMPRIME_MATRIZ
+
+      RETORNA_PRINCIPAL:
+        POP CX
+        ; LOOP INICIO_LEITURA
+        ; LOOP ROT_IMPRIME_MATRIZ ; erro aqui!
+
     RET
-  ENDP JOGO_COMPUTADOR
+  ENDP JOGO_MULTIPLAYER
 
   MULTIPLAYER PROC 
   
@@ -117,96 +194,12 @@ TITLE Bot
     MOV DX, OFFSET MSG_ZERO
     INT 21H
 
-    MOV CX, 9
-    JMP LEITURA
-
-    MOSTRA_MATRIZ_ROT:
-      ; CALL MOSTRA_MATRIZ
-      MOSTRA_MATRIZ
-
-      FIM:
-        POP CX
-        POP SI
-        POP DX
-        POP AX
-
-      LOOP LEITURA
-  
-  LEITURA:
-    PUSH AX
-    PUSH DX
-    PUSH SI
-    PUSH CX
-
-    MOV CX, 2
-
-    NOVAMENTE:
-      CMP CX, 1
-      JE COLUNA
-      MOV AH, 09H
-      LEA DX, MSG_INSIRA_LINHA
-      INT 21H
-      JMP LE_LINHA
-
-      LE_LINHA:
-        MOV AH, 01H
-        INT 21H
-
-        XOR AH, AH
-        XOR AX, 30H
-
-        MOV BX, AX
-
-        MOV AH, 02H
-        MOV DL, 10
-        INT 21H
-
-        JMP FIM_LEITURA
-
-    COLUNA: 
-      MOV AH, 09H
-      LEA DX, MSG_INSIRA_COLUNA
-      INT 21H
-      MOV AH, 01H
-      INT 21H
-
-      XOR AH, AH
-      XOR AX, 30H
-
-      MOV SI, AX
-
-      MOV AH, 02H
-      MOV DL, 10
-      INT 21H
-      
-      FIM_LEITURA:
-        LOOP NOVAMENTE
-
-      PLACE:
-        POP CX
-        PUSH CX
-
-        AND CX, 0FH
-        AND CX, 01H
-        JE PAR
-
-        IMPAR:
-          MOV MATRIZ[BX+SI], 78h
-          JMP MOSTRA_MATRIZ_ROT
-
-        PAR:
-          MOV MATRIZ[BX+SI], 6Fh
-          JMP MOSTRA_MATRIZ_ROT
-
-      EMPATE:
-        MOV AH, 09H
-        LEA DX, MSG_EMPATE
-        INT 21H
+    CALL JOGO_MULTIPLAYER
 
     RET
   ENDP MULTIPLAYER
 
-  INICIACAO PROC
+  INCIALIZACAO PROC
     ; IMPRIME MENSAGEM DE BEM-VINDO
     MOV AH, 09H
     MOV DX, OFFSET MSG_BEMVINDO
@@ -234,7 +227,7 @@ TITLE Bot
 
     VOLTAR:
       RET 
-  INICIACAO ENDP
+  INCIALIZACAO ENDP
 
   IMPRIME_ZERO PROC
     MOV AH, 09H
@@ -256,17 +249,17 @@ TITLE Bot
     MOV AX,@DATA      ;Inicialização dos dados
     MOV DS,AX
 
-    CALL INICIACAO    ;Iniciação do jogo
+    CALL INCIALIZACAO    ;Iniciação do jogo
 
     CMP AL, 0         ;Condição para entrar no modo multiplayer
     JZ ESCOPO_ZERO    ;Condição 
 
     ESCOPO_UM:
-      CALL JOGO_COMPUTADOR
+      CALL JOGO_MULTIPLAYER
       JMP FIM_PROGRAMA
 
     ESCOPO_ZERO:  
-      MOV CX, 9      
+      MOV CX, 9 
       CALL MULTIPLAYER
       JMP FIM_PROGRAMA
 
