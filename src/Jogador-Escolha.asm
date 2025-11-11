@@ -46,6 +46,7 @@ CAPTA:
     POP SI
     AND SI, 0FH
 
+    POP DI
     POP DX
     POP CX
     POP AX

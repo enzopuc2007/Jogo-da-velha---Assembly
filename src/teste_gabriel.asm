@@ -25,21 +25,116 @@ TITLE Bot
   MSG_GANHOU_J1 DB 'Jogador 1 ganhou'
   MSG_GANHOU_J2 DB 'Jogador 2 ganhou'
 .CODE
+  PULA_LINHA MACRO 
+    MOV AH, 02H
+    MOV DL, 10
+    INT 21H
+  ENDM 
  
-  JOGO_COMPUTADOR PROC
+  ; JOGO_COMPUTADOR PROC
+
+  ;   MOV AH, 09H
+  ;   MOV DX, OFFSET MSG_ZERO
+  ;   INT 21H
+
+  ;   PUSH CX
+  ;   MOV CX, 2
+
+  ; NOVAMENTE:
+  ;   CMP CX, 1
+  ;   JE DOIS
+    
+  ;   MOV AH, 09H
+  ;   LEA DX, MSG1
+  ;   INT 21H
+
+  ;   JMP CAPTA
+
+  ; DOIS:
+  ;   MOV AH, 09H
+  ;   LEA DX, MSG2
+  ;   INT 21H
+  ;   SHL BX, 8
+
+  ; CAPTA: 
+  ;   MOV AH, 01H
+  ;   INT 21H
+
+  ;   MOV BL, AL
+
+  ;   MOV AH, 02H
+  ;   MOV DL, 10
+  ;   INT 21H
+
+  ;   LOOP NOVAMENTE
+
+  ;   PUSH BX
+  ;   SHR BX, 8
+  ;   AND BX, 0FH
+
+  ;   POP SI
+  ;   AND SI, 0FH
+
+  ;   POP DI
+  ;   POP DX
+  ;   POP CX
+  ;   POP AX
+  ;   RET
+  ; ENDP JOGO_COMPUTADOR
+
+  JOGO_MULTIPLAYER PROC
 
     MOV AH, 09H
-    MOV DX, OFFSET MSG_UM
+    MOV DX, OFFSET MSG_ZERO
     INT 21H
 
+    PUSH CX
+    MOV CX, 2
+
+  NOVAMENTE: ; le o endereco de linha
+    CMP CX, 1
+    JE DOIS
+    
+    MOV AH, 09H
+    LEA DX, MSG_INSIRA_LINHA
+    INT 21H
+
+    JMP CAPTA
+
+  DOIS: ; le o endereco de coluna
+    MOV AH, 09H
+    LEA DX, MSG_INSIRA_COLUNA
+    INT 21H
+    SHL BX, 8
+
+  CAPTA: 
+    MOV AH, 01H
+    INT 21H
+
+    MOV BL, AL
+
+    PULA_LINHA
+
+    LOOP NOVAMENTE
+
+    PUSH BX
+    SHR BX, 8
+    AND BX, 0FH
+
+    POP SI
+    AND SI, 0FH
+
+    POP CX
     RET
-  ENDP JOGO_COMPUTADOR
+  ENDP JOGO_MULTIPLAYER
 
   MULTIPLAYER PROC 
   
     MOV AH, 09H
     MOV DX, OFFSET MSG_ZERO
     INT 21H
+
+    CALL JOGO_MULTIPLAYER
 
     RET
   ENDP MULTIPLAYER
@@ -100,7 +195,7 @@ TITLE Bot
     JZ ESCOPO_ZERO    ;Condição 
 
     ESCOPO_UM:
-      CALL JOGO_COMPUTADOR
+      CALL JOGO_MULTIPLAYER
       JMP FIM_PROGRAMA
 
     ESCOPO_ZERO:  
