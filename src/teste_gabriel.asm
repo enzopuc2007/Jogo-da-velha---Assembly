@@ -25,87 +25,122 @@ TITLE Bot
   MSG_GANHOU_J1 DB 'Jogador 1 ganhou'
   MSG_GANHOU_J2 DB 'Jogador 2 ganhou'
 .CODE
-  PULA_LINHA MACRO 
+  PULA_LINHA MACRO ; macro de pular linha (será usado repetidas vezes ao longo do jogo)
     MOV AH, 02H
     MOV DL, 10
     INT 21H
-  ENDM 
- 
-  ; JOGO_COMPUTADOR PROC
+  ENDM
 
-  ;   MOV AH, 09H
-  ;   MOV DX, OFFSET MSG_ZERO
-  ;   INT 21H
-
-  ;   PUSH CX
-  ;   MOV CX, 2
-
-  ; NOVAMENTE:
-  ;   CMP CX, 1
-  ;   JE DOIS
-    
-  ;   MOV AH, 09H
-  ;   LEA DX, MSG1
-  ;   INT 21H
-
-  ;   JMP CAPTA
-
-  ; DOIS:
-  ;   MOV AH, 09H
-  ;   LEA DX, MSG2
-  ;   INT 21H
-  ;   SHL BX, 8
-
-  ; CAPTA: 
-  ;   MOV AH, 01H
-  ;   INT 21H
-
-  ;   MOV BL, AL
-
-  ;   MOV AH, 02H
-  ;   MOV DL, 10
-  ;   INT 21H
-
-  ;   LOOP NOVAMENTE
-
-  ;   PUSH BX
-  ;   SHR BX, 8
-  ;   AND BX, 0FH
-
-  ;   POP SI
-  ;   AND SI, 0FH
-
-  ;   POP DI
-  ;   POP DX
-  ;   POP CX
-  ;   POP AX
-  ;   RET
-  ; ENDP JOGO_COMPUTADOR
-
-  JOGO_MULTIPLAYER PROC
-
-    MOV AH, 09H
-    MOV DX, OFFSET MSG_ZERO
-    INT 21H
+  IMPRIME_MATRIZ MACRO
 
     PUSH CX
-    MOV CX, 2
+
+    XOR BX,BX
+    XOR SI,SI
+    MOV AH,2
+    MOV CL,3
+    MOV CH,3
+
+  REPETE2:
+    MOV CL,3
+    XOR SI,SI
+    MOV DL,20h
+    INT 21h
+  REPETE1:
+    MOV AL,MATRIZ[BX][SI]
+    
+    CMP AL,0
+    JE IMPRIMEN
+
+    CMP AL,6Fh
+    JE IMPRIME0
+
+    CMP AL,78h
+    JE IMPRIMEX
+
+  IMPRIMEN:
+    MOV DL,20h
+    INT 21h
+    JMP COND
+
+  IMPRIME0:
+    MOV DL,6Fh
+    INT 21h
+    JMP COND
+
+  IMPRIMEX:
+    MOV DL,78h
+    INT 21h
+    JMP COND
+
+  COND:
+    CMP CL,1
+    JE FINAL1
+    MOV DL,7Ch
+    INT 21h  
+
+  FINAL1:
+    INC SI
+    DEC CL
+    JNZ REPETE1
+    ADD BX,3
+
+    CMP CH,1
+    JE FINAL2
+
+    MOV DL,10
+    INT 21h
+
+    MOV DL,20h
+    INT 21h
+
+    MOV DH,3
+  DENOVO:
+    MOV DL,2Dh
+    INT 21h
+
+    CMP DH,1
+    JE FINAL2
+
+    MOV DL,7Ch
+    INT 21h
+    DEC DH
+    JNZ DENOVO
+
+  FINAL2:
+    MOV DL,10
+    INT 21h
+    DEC CH
+    JNZ REPETE2
+
+    POP CX
+
+  ENDM
+
+  JOGO_MULTIPLAYER PROC ; procedimento de inicialização da opção multiplayer
+
+  ; ROT_IMPRIME_MATRIZ:
+    IMPRIME_MATRIZ
+
+  INICIO_LEITURA:
+    PUSH CX ; 
+    MOV CX, 2 ; 
 
   NOVAMENTE: ; le o endereco de linha
-    CMP CX, 1
-    JE DOIS
+    CMP CX, 1 ; 
+    JE DOIS ; 
     
-    MOV AH, 09H
-    LEA DX, MSG_INSIRA_LINHA
-    INT 21H
+    MOV AH, 09H ; 
+    LEA DX, MSG_INSIRA_LINHA ; 
+    INT 21H ; 
 
-    JMP CAPTA
+    JMP CAPTA ; 
 
   DOIS: ; le o endereco de coluna
-    MOV AH, 09H
-    LEA DX, MSG_INSIRA_COLUNA
-    INT 21H
-    SHL BX, 8
+    MOV AH, 09H ;  
+    LEA DX, MSG_INSIRA_COLUNA ; 
+    INT 21H ;  
+    SHL BX, 8 ; 
 
   CAPTA: 
     MOV AH, 01H
@@ -125,6 +160,31 @@ TITLE Bot
     AND SI, 0FH
 
     POP CX
+
+    VERIFICA_PARIDADE: ; SE CX FOR ÍMPAR -> VEZ DO J1
+                       ; SE CX FOR PAR -> VEZ DO J2
+      PUSH CX
+      AND CX, 01H
+
+      CMP CX, 1
+      JZ IMPAR
+
+      PAR:
+        MOV AL, 6Fh
+        MOV MATRIZ[BX+SI], AL
+        ; IMPRIME_MATRIZ
+        JMP RETORNA_PRINCIPAL
+
+      IMPAR:
+        MOV AL, 78h
+        MOV MATRIZ[BX+SI], AL
+        ; IMPRIME_MATRIZ
+
+      RETORNA_PRINCIPAL:
+        POP CX
+        ; LOOP INICIO_LEITURA
+        ; LOOP ROT_IMPRIME_MATRIZ ; erro aqui!
+
     RET
   ENDP JOGO_MULTIPLAYER
 
@@ -199,7 +259,7 @@ TITLE Bot
       JMP FIM_PROGRAMA
 
     ESCOPO_ZERO:  
-      MOV CX, 9   
+      MOV CX, 9 
       CALL MULTIPLAYER
       JMP FIM_PROGRAMA
 
