@@ -14,8 +14,8 @@ TITLE Bot
   MSG_ZERO DB 13, 10, 'A opcao selecionada foi a opcao MULTIPLAYER.', 13, 10, '$'
   MSG_UM DB 13, 10, 'A opcao selecionada foi a opcao JOGO COM COMPUTADOR.', 13, 10, '$'
 
-  MSG_INSIRA_LINHA DB 'Escolha a linha da jogada: $'
-  MSG_INSIRA_COLUNA DB 'Escolha a coluna da jogada: $'
+  MSG_INSIRA_LINHA DB 'Escolha a linha da jogada(1 a 3): $'
+  MSG_INSIRA_COLUNA DB 'Escolha a coluna da jogada(1 a 3): $'
 
   MSG_EMPATE DB 'Empate! $'
 
