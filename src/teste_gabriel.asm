@@ -31,7 +31,7 @@ TITLE Bot
     INT 21H
   ENDM
 
-  IMPRIME_MATRIZ MACRO
+  IMPRIME_MATRIZ PROC
 
     PUSH CX
 
@@ -115,14 +115,14 @@ TITLE Bot
 
     POP CX
 
-  ENDM
+  ENDP
 
   JOGO_MULTIPLAYER PROC ; procedimento de inicialização da opção multiplayer
 
-  ; ROT_IMPRIME_MATRIZ:
-    IMPRIME_MATRIZ
-
   INICIO_LEITURA:
+  ; ROT_IMPRIME_MATRIZ:
+    CALL IMPRIME_MATRIZ
+
     PUSH CX ; 
     MOV CX, 2 ; 
 
@@ -146,7 +146,7 @@ TITLE Bot
     MOV AH, 01H
     INT 21H
 
-    MOV BL, AL
+    MOV BL,AL
 
     PULA_LINHA
 
@@ -164,26 +164,23 @@ TITLE Bot
     VERIFICA_PARIDADE: ; SE CX FOR ÍMPAR -> VEZ DO J1
                        ; SE CX FOR PAR -> VEZ DO J2
       PUSH CX
-      AND CX, 01H
+      AND CX, 1
 
       CMP CX, 1
       JZ IMPAR
 
       PAR:
-        MOV AL, 6Fh
-        MOV MATRIZ[BX+SI], AL
+        MOV BYTE PTR MATRIZ[BX+SI], 6Fh
         ; IMPRIME_MATRIZ
         JMP RETORNA_PRINCIPAL
 
       IMPAR:
-        MOV AL, 78h
-        MOV MATRIZ[BX+SI], AL
+        MOV BYTE PTR MATRIZ[BX+SI], 78h
         ; IMPRIME_MATRIZ
 
       RETORNA_PRINCIPAL:
         POP CX
-        ; LOOP INICIO_LEITURA
-        ; LOOP ROT_IMPRIME_MATRIZ ; erro aqui!
+        LOOP INICIO_LEITURA
 
     RET
   ENDP JOGO_MULTIPLAYER
@@ -258,8 +255,7 @@ TITLE Bot
       CALL JOGO_MULTIPLAYER
       JMP FIM_PROGRAMA
 
-    ESCOPO_ZERO:  
-      MOV CX, 9 
+    ESCOPO_ZERO:   
       CALL MULTIPLAYER
       JMP FIM_PROGRAMA
 
