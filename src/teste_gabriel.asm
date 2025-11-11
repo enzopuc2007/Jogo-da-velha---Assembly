@@ -22,6 +22,8 @@ TITLE Bot
   MSG_VEZ_J1 DB 'Vez do jogador 1 $'
   MSG_VEZ_J2 DB 'Vez do jogador 2 $'
 
+  MSG_GANHOU_J1 DB 'Jogador 1 ganhou'
+  MSG_GANHOU_J2 DB 'Jogador 2 ganhou'
 .CODE
  
   JOGO_COMPUTADOR PROC
@@ -38,9 +40,6 @@ TITLE Bot
     MOV AH, 09H
     MOV DX, OFFSET MSG_ZERO
     INT 21H
-
-    MOV CX, 9
-    ; JMP LEITURA
 
     RET
   ENDP MULTIPLAYER
