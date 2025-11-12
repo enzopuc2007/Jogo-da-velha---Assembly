@@ -31,13 +31,10 @@ TITLE Bot
   ENDM
 
   IMPRIME_MATRIZ PROC
-
     PUSH CX
 
     XOR BX,BX
-    XOR SI,SI
     MOV AH,2
-    MOV CL,3
     MOV CH,3
 
   REPETE2:
@@ -113,8 +110,7 @@ TITLE Bot
     JNZ REPETE2
 
     POP CX
-
-  ENDP
+  IMPRIME_MATRIZ ENDP
 
   JOGO_MULTIPLAYER PROC ; procedimento de inicialização da opção multiplayer
 
