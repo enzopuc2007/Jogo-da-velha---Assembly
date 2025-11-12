@@ -25,11 +25,11 @@ TITLE Bot
   MSG_GANHOU_J1 DB 'Jogador 1 ganhou'
   MSG_GANHOU_J2 DB 'Jogador 2 ganhou'
 .CODE
-  PULA_LINHA MACRO ; macro de pular linha (será usado repetidas vezes ao longo do jogo)
-    MOV AH, 02H
-    MOV DL, 10
-    INT 21H
-  ENDM
+  ;PULA_LINHA MACRO ; macro de pular linha (será usado repetidas vezes ao longo do jogo)
+    ;MOV AH, 02H
+    ;MOV DL, 10
+    ;INT 21H
+  ;ENDM
 
   IMPRIME_MATRIZ PROC
     PUSH CX
@@ -246,6 +246,8 @@ TITLE Bot
  MAIN PROC 
     MOV AX,@DATA      ;Inicialização dos dados
     MOV DS,AX
+
+    PULA_LINHA
 
     CALL INCIALIZACAO    ;Iniciação do jogo
 
