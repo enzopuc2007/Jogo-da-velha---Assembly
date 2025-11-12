@@ -110,6 +110,7 @@ TITLE Bot
     JNZ REPETE2
 
     POP CX
+    RET
   IMPRIME_MATRIZ ENDP
 
   JOGO_MULTIPLAYER PROC ; procedimento de inicialização da opção multiplayer
