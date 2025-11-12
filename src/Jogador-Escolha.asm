@@ -31,7 +31,10 @@ CAPTA:
     MOV AH,1
     INT 21h
 
+    SUB AL,1
     MOV BL,AL
+
+    
 
     MOV AH,2
     MOV DL,10
