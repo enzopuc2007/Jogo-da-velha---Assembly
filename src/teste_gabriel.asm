@@ -23,13 +23,12 @@ TITLE Bot
 
   MSG_GANHOU_J1 DB 'Jogador 1 ganhou'
   MSG_GANHOU_J2 DB 'Jogador 2 ganhou'
-.CODE
   PULA_LINHA MACRO ; macro de pular linha (será usado repetidas vezes ao longo do jogo)
     MOV AH, 02H
     MOV DL, 10
     INT 21H
-  ENDM
-
+  PULA_LINHA ENDM
+.CODE
   IMPRIME_MATRIZ PROC
     PUSH CX
 
@@ -166,14 +165,14 @@ TITLE Bot
       JZ IMPAR
 
       PAR:
-        MOV BYTE PTR MATRIZ[BX+SI], 6Fh
+        MOV BYTE PTR MATRIZ[BX][SI], 6Fh
         ADD BX,SI
         MOV BYTE PTR VETOR_G[BX], 6Fh
         ; IMPRIME_MATRIZ
         JMP RETORNA_PRINCIPAL
 
       IMPAR:
-        MOV BYTE PTR MATRIZ[BX+SI], 78h
+        MOV BYTE PTR MATRIZ[BX][SI], 78h
         ADD BX,SI
         MOV BYTE PTR VETOR_G[BX], 78h
         ; IMPRIME_MATRIZ
@@ -183,7 +182,7 @@ TITLE Bot
         LOOP INICIO_LEITURA
 
     RET
-  ENDP JOGO_MULTIPLAYER
+  JOGO_MULTIPLAYER ENDP
 
   MULTIPLAYER PROC 
   
@@ -194,9 +193,9 @@ TITLE Bot
     CALL JOGO_MULTIPLAYER
 
     RET
-  ENDP MULTIPLAYER
+  MULTIPLAYER ENDP 
 
-  INCIALIZACAO PROC
+  INICIALIZACAO PROC
     ; IMPRIME MENSAGEM DE BEM-VINDO
     MOV AH, 09H
     MOV DX, OFFSET MSG_BEMVINDO
@@ -224,7 +223,7 @@ TITLE Bot
 
     VOLTAR:
       RET 
-  INCIALIZACAO ENDP
+  INICIALIZACAO ENDP
 
   IMPRIME_ZERO PROC
     MOV AH, 09H
@@ -246,9 +245,7 @@ TITLE Bot
     MOV AX,@DATA      ;Inicialização dos dados
     MOV DS,AX
 
-    PULA_LINHA
-
-    CALL INCIALIZACAO    ;Iniciação do jogo
+    CALL INICIALIZACAO    ;Iniciação do jogo
 
     CMP AL, 0         ;Condição para entrar no modo multiplayer
     JZ ESCOPO_ZERO    ;Condição 
