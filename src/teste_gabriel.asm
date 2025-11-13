@@ -21,13 +21,14 @@ TITLE Bot
   MSG_VEZ_J1 DB 'Vez do jogador 1 $'
   MSG_VEZ_J2 DB 'Vez do jogador 2 $'
 
-  MSG_GANHOU_J1 DB 'Jogador 1 ganhou'
-  MSG_GANHOU_J2 DB 'Jogador 2 ganhou'
+  MSG_GANHOU_J1 DB 'Jogador 1 ganhou $'
+  MSG_GANHOU_J2 DB 'Jogador 2 ganhou $'
+
   PULA_LINHA MACRO ; macro de pular linha (será usado repetidas vezes ao longo do jogo)
     MOV AH, 02H
     MOV DL, 10
     INT 21H
-  PULA_LINHA ENDM
+  ENDM PULA_LINHA
 .CODE
   IMPRIME_MATRIZ PROC
     PUSH CX
