@@ -1,0 +1,84 @@
+IMPRIME_MATRIZ PROC
+    PUSHALL
+    ; PUSH CX
+
+    XOR BX,BX
+    MOV AH,2
+    MOV CH,3
+
+  REPETE2:
+    MOV CL,3
+    XOR SI,SI
+    MOV DL,20h
+    INT 21h
+  REPETE1:
+    MOV AL,MATRIZ[BX][SI]
+    
+    CMP AL,0
+    JE IMPRIMEN
+
+    CMP AL,6Fh
+    JE IMPRIME0
+
+    CMP AL,78h
+    JE IMPRIMEX
+
+  IMPRIMEN:
+    MOV DL,20h
+    INT 21h
+    JMP COND
+
+  IMPRIME0:
+    MOV DL,6Fh
+    INT 21h
+    JMP COND
+
+  IMPRIMEX:
+    MOV DL,78h
+    INT 21h
+    JMP COND
+
+  COND:
+    CMP CL,1
+    JE FINAL1
+    MOV DL,7Ch
+    INT 21h  
+
+  FINAL1:
+    INC SI
+    DEC CL
+    JNZ REPETE1
+    ADD BX,3
+
+    CMP CH,1
+    JE FINAL2
+
+    MOV DL,10
+    INT 21h
+
+    MOV DL,20h
+    INT 21h
+
+    MOV DH,3
+  DENOVO:
+    MOV DL,2Dh
+    INT 21h
+
+    CMP DH,1
+    JE FINAL2
+
+    MOV DL,7Ch
+    INT 21h
+    DEC DH
+    JNZ DENOVO
+
+  FINAL2:
+    MOV DL,10
+    INT 21h
+    DEC CH
+    JNZ REPETE2
+
+    ; POP CX
+    POPALL
+  RET
+IMPRIME_MATRIZ ENDP
