@@ -1,6 +1,7 @@
 TITLE Bot
 .MODEL SMALL
 .STACK 100h
+INCLUDE macros.inc
 .DATA
   MSG_BEMVINDO DB 'JOGO DA VELHA', 13, 10, 13, 10, '$'
   MSG1 DB 'Selecione o modo de jogo (0 - Multiplayer | 1 - Computador)', 13, 10, 13, 10,'Digite a sua opcao: $'
@@ -30,7 +31,6 @@ TITLE Bot
     INT 21H
   ENDM PULA_LINHA
 .CODE
-INCLUDE macros.inc
   IMPRIME_MATRIZ PROC
     PUSH CX
 
