@@ -5,7 +5,6 @@
   ENDM
 
 PUSHALL MACRO 
-    PUSH AX 
     PUSH BX 
     PUSH CX 
     PUSH DX 
