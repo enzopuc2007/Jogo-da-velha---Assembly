@@ -46,28 +46,7 @@ INCLUDE procs.inc
     CALL IMPRIME_MATRIZ
 
   LEITURA:
-    PUSH CX
-    AND CX, 1
-    JE IMPAR_MSG
-
-    PAR_MSG:
-      MOV AH, 09H
-      LEA DX, MSG_VEZ_J2
-      INT 21H
-
-      PULA_LINHA
-      JMP LER_POSICAO
-    
-    IMPAR_MSG:
-      MOV AH, 09H
-      LEA DX, MSG_VEZ_J1
-      INT 21H
-
-      PULA_LINHA
-
-    POP CX
-
-  LER_POSICAO: ; le o endereco de linha
+  ; NOVAMENTE: ; le o endereco de linha
     CMP CL, 1 ; 
     JE DOIS ; 
     
