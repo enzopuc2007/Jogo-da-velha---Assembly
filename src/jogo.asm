@@ -1,6 +1,9 @@
 TITLE Bot
 .MODEL SMALL
 .STACK 100h
+; Warning !!!
+; Program is running well only in debug mode.
+; Please, execute in debug mode for this period of time.
 .DATA
   MSG_BEMVINDO DB 'JOGO DA VELHA', 13, 10, 13, 10, '$'
   MSG1 DB 'Selecione o modo de jogo (0 - Multiplayer | 1 - Computador)', 13, 10, 13, 10,'Digite a sua opcao: $'
@@ -24,11 +27,6 @@ TITLE Bot
   MSG_GANHOU_J1 DB 'Jogador 1 ganhou $'
   MSG_GANHOU_J2 DB 'Jogador 2 ganhou $'
 
-  ; PULA_LINHA MACRO ; macro de pular linha (será usado repetidas vezes ao longo do jogo)
-  ;   MOV AH, 02H
-  ;   MOV DL, 10
-  ;   INT 21H
-  ; ENDM PULA_LINHA
 .CODE
 INCLUDE macros.inc
 INCLUDE procs.inc
@@ -125,15 +123,15 @@ INCLUDE procs.inc
     MOV AH, 09H
     MOV DX, OFFSET MSG_ZERO
     INT 21H
-
-  INICIO_LEITURA:
-    CALL IMPRIME_MATRIZ
-
     ; PUSH CX ; 
     MOV CH, 9
     MOV CL, 2 ; 
 
-  NOVAMENTE: ; le o endereco de linha
+  NOVAMENTE:
+    CALL IMPRIME_MATRIZ
+
+  LEITURA:
+  ; NOVAMENTE: ; le o endereco de linha
     CMP CL, 1 ; 
     JE DOIS ; 
     
@@ -159,7 +157,7 @@ INCLUDE procs.inc
 
     ; LOOP NOVAMENTE
     DEC CL
-    JNZ NOVAMENTE
+    JNZ LEITURA
 
     PUSH BX
     SHR BX, 8
@@ -202,46 +200,46 @@ INCLUDE procs.inc
     RET
   JOGO_MULTIPLAYER ENDP
 
-  INICIALIZACAO PROC
-    PUSHALL
+  ; INICIALIZACAO PROC
+  ;   PUSHALL
 
-    ; IMPRIME MENSAGEM DE BEM-VINDO
-    MOV AH, 09H
-    MOV DX, OFFSET MSG_BEMVINDO
-    INT 21H
+  ;   ; IMPRIME MENSAGEM DE BEM-VINDO
+  ;   MOV AH, 09H
+  ;   MOV DX, OFFSET MSG_BEMVINDO
+  ;   INT 21H
 
-    ENTRADA_OPCAO:
-      ; IMPRIME MENSAGEM DE MODO DE JOGO
-      MOV DX, OFFSET MSG1
-      INT 21H
+  ;   ENTRADA_OPCAO:
+  ;     ; IMPRIME MENSAGEM DE MODO DE JOGO
+  ;     MOV DX, OFFSET MSG1
+  ;     INT 21H
 
-      MOV AH, 01H
-      INT 21H
+  ;     MOV AH, 01H
+  ;     INT 21H
 
-      AND AL, 0FH
+  ;     AND AL, 0FH
 
-      CMP AL, 0
-      JZ VOLTAR
-      CMP AL, 1
-      JE VOLTAR
+  ;     CMP AL, 0
+  ;     JZ VOLTAR
+  ;     CMP AL, 1
+  ;     JE VOLTAR
 
-      MOV AH, 09H
-      MOV DX, OFFSET MSG2
-      INT 21H
-      JMP ENTRADA_OPCAO
+  ;     MOV AH, 09H
+  ;     MOV DX, OFFSET MSG2
+  ;     INT 21H
+  ;     JMP ENTRADA_OPCAO
 
-    VOLTAR:
-      POPALL
-      RET 
-  INICIALIZACAO ENDP
+  ;   VOLTAR:
+  ;     POPALL
+  ;     RET 
+  ; INICIALIZACAO ENDP
 
-  IMPRIME_UM PROC
-    MOV AH, 09H
-    MOV DX, OFFSET MSG_UM
-    INT 21H
+  ; IMPRIME_UM PROC
+  ;   MOV AH, 09H
+  ;   MOV DX, OFFSET MSG_UM
+  ;   INT 21H
 
-    RET
-  IMPRIME_UM ENDP
+  ;   RET
+  ; IMPRIME_UM ENDP
 
  MAIN PROC 
     MOV AX,@DATA      ;Inicialização dos dados
