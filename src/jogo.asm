@@ -30,91 +30,6 @@ TITLE Bot
 .CODE
 INCLUDE macros.inc
 INCLUDE procs.inc
-  ; IMPRIME_MATRIZ PROC
-  ;   PUSHALL
-  ;   ; PUSH CX
-
-  ;   XOR BX,BX
-  ;   MOV AH,2
-  ;   MOV CH,3
-
-  ; REPETE2:
-  ;   MOV CL,3
-  ;   XOR SI,SI
-  ;   MOV DL,20h
-  ;   INT 21h
-  ; REPETE1:
-  ;   MOV AL,MATRIZ[BX][SI]
-    
-  ;   CMP AL,0
-  ;   JE IMPRIMEN
-
-  ;   CMP AL,6Fh
-  ;   JE IMPRIME0
-
-  ;   CMP AL,78h
-  ;   JE IMPRIMEX
-
-  ; IMPRIMEN:
-  ;   MOV DL,20h
-  ;   INT 21h
-  ;   JMP COND
-
-  ; IMPRIME0:
-  ;   MOV DL,6Fh
-  ;   INT 21h
-  ;   JMP COND
-
-  ; IMPRIMEX:
-  ;   MOV DL,78h
-  ;   INT 21h
-  ;   JMP COND
-
-  ; COND:
-  ;   CMP CL,1
-  ;   JE FINAL1
-  ;   MOV DL,7Ch
-  ;   INT 21h  
-
-  ; FINAL1:
-  ;   INC SI
-  ;   DEC CL
-  ;   JNZ REPETE1
-  ;   ADD BX,3
-
-  ;   CMP CH,1
-  ;   JE FINAL2
-
-  ;   MOV DL,10
-  ;   INT 21h
-
-  ;   MOV DL,20h
-  ;   INT 21h
-
-  ;   MOV DH,3
-  ; DENOVO:
-  ;   MOV DL,2Dh
-  ;   INT 21h
-
-  ;   CMP DH,1
-  ;   JE FINAL2
-
-  ;   MOV DL,7Ch
-  ;   INT 21h
-  ;   DEC DH
-  ;   JNZ DENOVO
-
-  ; FINAL2:
-  ;   MOV DL,10
-  ;   INT 21h
-  ;   DEC CH
-  ;   JNZ REPETE2
-
-  ;   ; POP CX
-  ;   POPALL
-  ;   RET
-  ; IMPRIME_MATRIZ ENDP
-
   JOGO_MULTIPLAYER PROC ; procedimento de inicialização da opção multiplayer
 
   PUSHALL
@@ -131,7 +46,28 @@ INCLUDE procs.inc
     CALL IMPRIME_MATRIZ
 
   LEITURA:
-  ; NOVAMENTE: ; le o endereco de linha
+    PUSH CX
+    AND CX, 1
+    JE IMPAR_MSG
+
+    PAR_MSG:
+      MOV AH, 09H
+      LEA DX, MSG_VEZ_J2
+      INT 21H
+
+      PULA_LINHA
+      JMP LER_POSICAO
+    
+    IMPAR_MSG:
+      MOV AH, 09H
+      LEA DX, MSG_VEZ_J1
+      INT 21H
+
+      PULA_LINHA
+
+    POP CX
+
+  LER_POSICAO: ; le o endereco de linha
     CMP CL, 1 ; 
     JE DOIS ; 
     
@@ -193,53 +129,15 @@ INCLUDE procs.inc
         POP CX
         MOV CL, 2
         DEC CH
-        CMP CH, 9
-        JB NOVAMENTE
-
-    POPALL
+        CMP CH, 0
+        JE FIM_JOGO
+        ; CMP CH, 9
+        JMP NOVAMENTE
+    FIM_JOGO:
+      CALL IMPRIME_MATRIZ
+      POPALL
     RET
   JOGO_MULTIPLAYER ENDP
-
-  ; INICIALIZACAO PROC
-  ;   PUSHALL
-
-  ;   ; IMPRIME MENSAGEM DE BEM-VINDO
-  ;   MOV AH, 09H
-  ;   MOV DX, OFFSET MSG_BEMVINDO
-  ;   INT 21H
-
-  ;   ENTRADA_OPCAO:
-  ;     ; IMPRIME MENSAGEM DE MODO DE JOGO
-  ;     MOV DX, OFFSET MSG1
-  ;     INT 21H
-
-  ;     MOV AH, 01H
-  ;     INT 21H
-
-  ;     AND AL, 0FH
-
-  ;     CMP AL, 0
-  ;     JZ VOLTAR
-  ;     CMP AL, 1
-  ;     JE VOLTAR
-
-  ;     MOV AH, 09H
-  ;     MOV DX, OFFSET MSG2
-  ;     INT 21H
-  ;     JMP ENTRADA_OPCAO
-
-  ;   VOLTAR:
-  ;     POPALL
-  ;     RET 
-  ; INICIALIZACAO ENDP
-
-  ; IMPRIME_UM PROC
-  ;   MOV AH, 09H
-  ;   MOV DX, OFFSET MSG_UM
-  ;   INT 21H
-
-  ;   RET
-  ; IMPRIME_UM ENDP
 
  MAIN PROC 
     MOV AX,@DATA      ;Inicialização dos dados
