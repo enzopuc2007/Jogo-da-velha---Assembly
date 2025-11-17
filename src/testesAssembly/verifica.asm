@@ -1,0 +1,26 @@
+TITLE VERIFICACAO
+.MODEL SMALL
+.STACK 100h
+.DATA
+N EQU 3
+MATRIZ DB 6Fh,6Fh,6Fh
+       DB 78h,78h,6Fh
+       DB 00h,00h,00h
+.CODE
+ MAIN PROC
+    MOV AX,@DATA
+    MOV DS,AX
+
+    MOV AH,1
+    INT 21h
+
+    XOR BX,BX
+    MOV BL,AL
+
+    SHR BX,8
+
+    INT 21h
+    XOR SI,SI
+    MOV SI
+
+END MAIN
