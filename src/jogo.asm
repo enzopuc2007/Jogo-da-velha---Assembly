@@ -76,10 +76,10 @@ INCLUDE procs.inc
 
     PUSH BX
     SHR BX, 8
-    AND BX, 000Fh
+    AND BX, 7h
 
     POP SI
-    AND SI, 000Fh
+    AND SI, 3h
 
     ; POP CX
 
