@@ -122,6 +122,9 @@ INCLUDE procs.inc
     MOV AX,@DATA      ;Inicialização dos dados
     MOV DS,AX
 
+
+    
+
     CALL INICIALIZACAO    ;Iniciação do jogo
 
     CMP AL, 0         ;Condição para entrar no modo multiplayer
