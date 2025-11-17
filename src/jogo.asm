@@ -19,6 +19,8 @@ TITLE Bot
   MSG_INSIRA_LINHA DB 'Escolha a linha da jogada(Opcoes: 0, 3 ou 6): $'
   MSG_INSIRA_COLUNA DB 'Escolha a coluna da jogada(Opcoes: 0, 1 ou 2): $'
 
+  MSG_INVALIDO DB 'Posicao invalida. Tente novamente... $'
+
   MSG_EMPATE DB 'Empate! $'
 
   MSG_VEZ_J1 DB 'Vez do jogador 1 $'
@@ -30,6 +32,29 @@ TITLE Bot
 .CODE
 INCLUDE macros.inc
 INCLUDE procs.inc
+  VERIFICACAO_VIABILIDADE PROC
+    ;PUSHALL 
+
+    CMP BX, 7h
+    JAE INVALIDO
+    CMP SI, 3H
+    JAE INVALIDO
+    JMP FIM_VIABILIDADE
+
+    INVALIDO:
+      MOV AH, 09H
+      LEA DX, MSG_INVALIDO
+      INT 21H
+
+      MOV DL, 1
+      MOV CL, 2
+
+  FIM_VIABILIDADE:
+      POP BX
+    ;POPALL
+    RET
+  VERIFICACAO_VIABILIDADE ENDP
+
   JOGO_MULTIPLAYER PROC ; procedimento de inicialização da opção multiplayer
 
   PUSHALL
@@ -80,6 +105,11 @@ INCLUDE procs.inc
 
     POP SI
     AND SI, 0FH
+
+    CALL VERIFICACAO_VIABILIDADE
+
+    CMP DX, 01H
+    JE LEITURA
 
     ; POP CX
 
