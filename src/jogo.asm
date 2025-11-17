@@ -13,8 +13,7 @@ TITLE Bot
   MSG_ZERO DB 13, 10, 'A opcao selecionada foi a opcao MULTIPLAYER.', 13, 10, '$'
   MSG_UM DB 13, 10, 'A opcao selecionada foi a opcao JOGO COM COMPUTADOR.', 13, 10, '$'
 
-  MSG_INSIRA_LINHA DB 'Escolha a linha da jogada(Opcoes: 0, 3 ou 6): $'
-  MSG_INSIRA_COLUNA DB 'Escolha a coluna da jogada(Opcoes: 0, 1 ou 2): $'
+  MSG_INSIRA_POSICAO DB 'Escolha a posicao da jogada(Opcoes: 1 A 9): $'
 
   MSG_INVALIDO DB 'Posicao invalida. Tente novamente... $', 13, 10
 
@@ -29,85 +28,67 @@ TITLE Bot
 .CODE
 INCLUDE macros.inc
 INCLUDE procs.inc
-  VERIFICACAO_VIABILIDADE PROC
-    ;PUSHALL 
 
-    CMP BX, 15
-    JAE INVALIDO
-    JMP FIM_VIABILIDADE
+  VERIFICACAO_VIABILIDADE MACRO 
 
-    INVALIDO:
-      MOV AH, 09H
-      LEA DX, MSG_INVALIDO
-      INT 21H
+    CMP BL, 9
+    JB CONTINUA1
+    TEST BL, 0
+    JNZ CONTINUA1
 
-      ; MOV DL, 1
-      ; MOV CL, 2
-
-  FIM_VIABILIDADE:
-      ; POP BX
-    ;POPALL
-    RET
-  VERIFICACAO_VIABILIDADE ENDP
+    MOV AH, 09H
+    LEA DX, MSG_INVALIDO
+    INT 21H
+    JMP LEITURA
+  ENDM
 
   JOGO_MULTIPLAYER PROC ; procedimento de inicialização da opção multiplayer
-
   PUSHALL
-  
+  MOV CX, 9
+
   MOV AH, 09H
   MOV DX, OFFSET MSG_ZERO
   INT 21h
-
-  MOV CH, 9
 
   NOVAMENTE:
     CALL IMPRIME_MATRIZ
 
   LEITURA:    
     MOV AH, 09H ; 
-    LEA DX, MSG_INSIRA_LINHA ; 
+    LEA DX, MSG_INSIRA_POSICAO ; 
     INT 21H ; 
 
-    JMP CAPTA ; 
-
-  CAPTA: 
     MOV AH, 01H
     INT 21H
 
+    XOR BX,BX
     MOV BL,AL
     AND BL, 0FH
+    SUB BL,1
+
+    VERIFICACAO_VIABILIDADE
+
+CONTINUA1:
 
     PULA_LINHA
 
     VERIFICA_PARIDADE: ; SE CH FOR ÍMPAR -> VEZ DO J1
                        ; SE CH FOR PAR -> VEZ DO J2
-      PUSH CX
-      AND CH, 1
 
-      CMP CH, 1
+      TEST CX, 1
       JZ IMPAR
 
       PAR:
         MOV BYTE PTR MATRIZ[BX], 6Fh
-        ADD BX,SI
         MOV BYTE PTR VETOR_G[BX], 6Fh
-        ; IMPRIME_MATRIZ
         JMP RETORNA_PRINCIPAL
 
       IMPAR:
         MOV BYTE PTR MATRIZ[BX], 78h
-        ADD BX,SI
         MOV BYTE PTR VETOR_G[BX], 78h
-        ; IMPRIME_MATRIZ
 
       RETORNA_PRINCIPAL:
-        POP CX
-        MOV CL, 2
-        DEC CH
-        CMP CH, 0
-        JE FIM_JOGO
-        ; CMP CH, 9
-        JMP NOVAMENTE
+        LOOP NOVAMENTE
     FIM_JOGO:
       CALL IMPRIME_MATRIZ
       POPALL
