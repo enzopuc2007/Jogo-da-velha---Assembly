@@ -15,7 +15,7 @@ TITLE Bot
 
   MSG_INSIRA_POSICAO DB 'Escolha a posicao da jogada(Opcoes: 1 A 9): $'
 
-  MSG_INVALIDO DB 'Posicao invalida. Tente novamente... $', 13, 10
+  MSG_INVALIDO DB 10,'Posicao invalida.',10,13,'Tente novamente...',10,13,10,'$'
 
   MSG_EMPATE DB 'Empate! $'
 
@@ -39,7 +39,7 @@ INCLUDE procs.inc
     MOV AH, 09H
     LEA DX, MSG_INVALIDO
     INT 21H
-    JMP LEITURA
+    JMP NOVAMENTE
   ENDM
 
   JOGO_MULTIPLAYER PROC ; procedimento de inicialização da opção multiplayer
