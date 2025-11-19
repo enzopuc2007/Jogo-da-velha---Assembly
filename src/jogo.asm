@@ -5,8 +5,6 @@ TITLE Bot
   MSG_BEMVINDO DB 'JOGO DA VELHA', 13, 10, 13, 10, '$'
   MSG1 DB 'Selecione o modo de jogo (0 - Multiplayer | 1 - Computador)', 13, 10, 13, 10,'Digite a sua opcao: $'
   MSG2 DB 10,10,'Tente novamente, digito nao reconhecido...',13, 13, 10, '$'
-  ; MSG3 DB 'Insira o numero da linha em que você deseja inserir a sua peça do jogo (1 a 3): $', 13, 10
-  ; MSG4 DB 'Insira o numero da coluna em que você deseja inserir a sua peça do jogo (1 a 3): $', 13, 10
   MATRIZ DB 31H, 32H, 33H
          DB 34H, 35H, 36H
          DB 37H, 38H, 39H
@@ -18,7 +16,7 @@ TITLE Bot
   MSG_INSIRA_LINHA DB 'Escolha a linha da jogada(Opcoes: 1, 2 ou 3): $'
   MSG_INSIRA_COLUNA DB 'Escolha a coluna da jogada(Opcoes: 1, 2 ou 3): $'
 
-  MSG_INVALIDO DB 'Posicao invalida. Tente novamente... $'
+  MSG_INVALIDO DB 10,'Posicao invalida.',10,13,'Tente novamente...',10,13,10,'$'
 
   MSG_EMPATE DB 'Empate! $'
 
@@ -31,116 +29,72 @@ TITLE Bot
 .CODE
 INCLUDE macros.inc
 INCLUDE procs.inc
-  VERIFICACAO_VIABILIDADE PROC
-    ;PUSHALL 
 
-    CMP BX, 7h
-    JAE INVALIDO
-    CMP SI, 3H
-    JAE INVALIDO
-    JMP FIM_VIABILIDADE
+  VERIFICACAO_VIABILIDADE MACRO
+    CMP BL, 9
+    JB CONTINUA1
+    TEST BL, 0
+    JNZ CONTINUA1
 
-    INVALIDO:
-      MOV AH, 09H
-      LEA DX, MSG_INVALIDO
-      INT 21H
-
-      MOV DL, 1
-      MOV CL, 2
-
-  FIM_VIABILIDADE:
-      POP BX
-    ;POPALL
-    RET
-  VERIFICACAO_VIABILIDADE ENDP
-
-  JOGO_MULTIPLAYER PROC ; procedimento de inicialização da opção multiplayer
-
-  PUSHALL
-    ; MOV CH, 9
+    CMP MATRIZ[BX],78h
+    JNE TEST2
+TEST2:
+    CMP MATRIZ[BX],6Fh
+    JNE CONTINUA1
 
     MOV AH, 09H
-    MOV DX, OFFSET MSG_ZERO
+    LEA DX, MSG_INVALIDO
     INT 21H
-    ; PUSH CX ; 
-    MOV CH, 9
-    MOV CL, 2 ; 
+    JMP NOVAMENTE
+  ENDM
+
+  JOGO_MULTIPLAYER PROC ; procedimento de inicialização da opção multiplayer
+  PUSHALL
+  MOV CX, 9
+
+  MOV AH, 09H
+  MOV DX, OFFSET MSG_ZERO
+  INT 21h
 
   NOVAMENTE:
     CALL IMPRIME_MATRIZ
 
-  LEITURA:
-  ; NOVAMENTE: ; le o endereco de linha
-    CMP CL, 1 ; 
-    JE DOIS ; 
-    
+  LEITURA:    
     MOV AH, 09H ; 
-    LEA DX, MSG_INSIRA_LINHA ; 
+    LEA DX, MSG_INSIRA_POSICAO ; 
     INT 21H ; 
 
-    JMP CAPTA ; 
-
-  DOIS: ; le o endereco de coluna
-    MOV AH, 09H ;  
-    LEA DX, MSG_INSIRA_COLUNA ; 
-    INT 21H ;  
-    SHL BX, 8 ; 
-
-  CAPTA: 
     MOV AH, 01H
     INT 21H
 
+    XOR BX,BX
     MOV BL,AL
+    AND BL, 0FH
+    SUB BL,1
+
+    VERIFICACAO_VIABILIDADE
+
+CONTINUA1:
 
     PULA_LINHA
 
-    ; LOOP NOVAMENTE
-    DEC CL
-    JNZ LEITURA
-
-    PUSH BX
-    SHR BX, 8
-    AND BX, 7h
-
-    POP SI
-    AND SI, 3h
-
-    CALL VERIFICACAO_VIABILIDADE
-
-    CMP DX, 01H
-    JE LEITURA
-
-    ; POP CX
-
     VERIFICA_PARIDADE: ; SE CH FOR ÍMPAR -> VEZ DO J1
                        ; SE CH FOR PAR -> VEZ DO J2
-      PUSH CX
-      AND CH, 1
 
-      CMP CH, 1
+      TEST CX, 1
       JZ IMPAR
 
       PAR:
-        MOV BYTE PTR MATRIZ[BX][SI], 6Fh
-        ADD BX,SI
+        MOV BYTE PTR MATRIZ[BX], 6Fh
         MOV BYTE PTR VETOR_G[BX], 6Fh
-        ; IMPRIME_MATRIZ
         JMP RETORNA_PRINCIPAL
 
       IMPAR:
-        MOV BYTE PTR MATRIZ[BX][SI], 78h
-        ADD BX,SI
+        MOV BYTE PTR MATRIZ[BX], 78h
         MOV BYTE PTR VETOR_G[BX], 78h
-        ; IMPRIME_MATRIZ
 
       RETORNA_PRINCIPAL:
-        POP CX
-        MOV CL, 2
-        DEC CH
-        CMP CH, 0
-        JE FIM_JOGO
-        ; CMP CH, 9
-        JMP NOVAMENTE
+        LOOP NOVAMENTE
     FIM_JOGO:
       CALL IMPRIME_MATRIZ
       POPALL
