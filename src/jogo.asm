@@ -104,6 +104,8 @@ CONTINUA1:
     MOV AX,@DATA      ;Inicialização dos dados
     MOV DS,AX
 
+    CLS
+
     CALL INICIALIZACAO    ;Iniciação do jogo
 
     CMP AL, 0         ;Condição para entrar no modo multiplayer
