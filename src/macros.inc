@@ -24,7 +24,7 @@ POPALL MACRO
   ENDM
 
   CLS MACRO 
-        MOV AH, 0H
+    MOV AH, 0H
     MOV AL, 03H
     INT 10H
   ENDM

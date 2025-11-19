@@ -13,7 +13,8 @@ TITLE Bot
   MSG_ZERO DB 13, 10, 'A opcao selecionada foi a opcao MULTIPLAYER.', 13, 10, '$'
   MSG_UM DB 13, 10, 'A opcao selecionada foi a opcao JOGO COM COMPUTADOR.', 13, 10, '$'
 
-  MSG_INSIRA_POSICAO DB 'Escolha a posicao da jogada(Opcoes: 1 A 9): $'
+  MSG_INSIRA_LINHA DB 'Escolha a linha da jogada(Opcoes: 1, 2 ou 3): $'
+  MSG_INSIRA_COLUNA DB 'Escolha a coluna da jogada(Opcoes: 1, 2 ou 3): $'
 
   MSG_INVALIDO DB 10,'Posicao invalida.',10,13,'Tente novamente...',10,13,10,'$'
 

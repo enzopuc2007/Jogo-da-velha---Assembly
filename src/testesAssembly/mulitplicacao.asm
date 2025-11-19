@@ -1,0 +1,19 @@
+TITLE MULTIPLICACAO_TEST
+.MODEL SMALL
+.CODE
+  MAIN PROC
+    MOV AX, 3
+    MOV SI, 3
+
+    MUL SI
+
+    OR AL, 30H
+
+    MOV AH, 02H
+    MOV DL, AL
+    INT 21H
+    
+    MOV AH, 4CH
+    INT 21H
+  MAIN ENDP
+END MAIN 
