@@ -22,3 +22,9 @@ POPALL MACRO
     POP SI 
     ; POP DI 
   ENDM
+
+  CLS MACRO
+    MOV AH, 00H
+    MOV AL, 03H
+    INT 10H
+  ENDM

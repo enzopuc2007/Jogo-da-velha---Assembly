@@ -1,23 +1,22 @@
 TITLE Bot
 .MODEL SMALL
 .STACK 100h
-; Warning !!!
-; Program is running well only in debug mode.
-; Please, execute in debug mode for this period of time.
 .DATA
   MSG_BEMVINDO DB 'JOGO DA VELHA', 13, 10, 13, 10, '$'
   MSG1 DB 'Selecione o modo de jogo (0 - Multiplayer | 1 - Computador)', 13, 10, 13, 10,'Digite a sua opcao: $'
   MSG2 DB 10,10,'Tente novamente, digito nao reconhecido...',13, 13, 10, '$'
   ; MSG3 DB 'Insira o numero da linha em que você deseja inserir a sua peça do jogo (1 a 3): $', 13, 10
   ; MSG4 DB 'Insira o numero da coluna em que você deseja inserir a sua peça do jogo (1 a 3): $', 13, 10
-  MATRIZ DB 3 DUP (3 DUP (?)) ; define a matriz de jogo da velha
+  MATRIZ DB 31H, 32H, 33H
+         DB 34H, 35H, 36H
+         DB 37H, 38H, 39H
   VETOR_G DB 9 DUP (?) ; [ , , , , , , , , ]
 
   MSG_ZERO DB 13, 10, 'A opcao selecionada foi a opcao MULTIPLAYER.', 13, 10, '$'
   MSG_UM DB 13, 10, 'A opcao selecionada foi a opcao JOGO COM COMPUTADOR.', 13, 10, '$'
 
-  MSG_INSIRA_LINHA DB 'Escolha a linha da jogada(Opcoes: 0, 3 ou 6): $'
-  MSG_INSIRA_COLUNA DB 'Escolha a coluna da jogada(Opcoes: 0, 1 ou 2): $'
+  MSG_INSIRA_LINHA DB 'Escolha a linha da jogada(Opcoes: 1, 2 ou 3): $'
+  MSG_INSIRA_COLUNA DB 'Escolha a coluna da jogada(Opcoes: 1, 2 ou 3): $'
 
   MSG_INVALIDO DB 'Posicao invalida. Tente novamente... $'
 
@@ -152,8 +151,7 @@ INCLUDE procs.inc
     MOV AX,@DATA      ;Inicialização dos dados
     MOV DS,AX
 
-
-    
+    CLS
 
     CALL INICIALIZACAO    ;Iniciação do jogo
 
